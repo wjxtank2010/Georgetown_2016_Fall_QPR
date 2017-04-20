@@ -121,11 +121,13 @@ The better is the answer, the smaller is the average word distance for that answ
 Ranking
 =======
 
-After we got the candidate answers, ``validation score`` and ``answer extraction score``, we need to do a rank to see which document is better, namely we need to get a ``final score`` for each document. What we define here is: 
+After getting the ``validation score`` and ``answer extraction score``, the system calculate a ``final score`` for each document to do ranking. What we define here is: 
 
 ::
     ``final score`` = ``validation score`` * ``answer extraction score``
 
-Then we set up a threshhold to do a filter of the documents. This step is done in ``generate_formal_answer`` function in main.py. If there is no answer in the end, we will run the query again but with unrestricted mode this time. 
+Then we set up a threshhold (currently 0.5)to do a filter of the documents. If there is no document with over 0.5 score, return the half of the candidates with higher scores. The threshold can be adjusted if needed.
+
+This ranking step is done in ``generate_formal_answer`` function in ``main.py``. 
 
 
