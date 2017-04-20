@@ -90,7 +90,7 @@ the ``elasticsearch query body`` would be (after query expansion):
 Validation
 ==========
 
-After document retrival, we would do validation to check if a document is atcually what we are search for. It takes ``candidate documents`` in last step as ``input`` and generate ``validation score`` for each document. The validation step is done in ``validate`` function in ``main.py``. 
+After document retrival, we would do validation to check if a document is atcually what we are search for. It takes ``candidate documents`` in last step as ``input`` and generate ``validation score`` for each document. The validation step is done in ``validate`` function in ``main.py`` and validates documents by functions in ``extraction.py``. 
 
 There are two modes for validation which are ``restricted mode`` and  ``unrestricted mode``. 
 
@@ -103,7 +103,15 @@ Initially, we answer the query in restricted mode. If there is no answers in str
 Answer Extraction
 =================
 
-Answer extraction is basically extracting the answer that the question is mainly concerned about(all the extraction fucntions are in ``extraction.py``). However, it could be challenging due to the "noises". What we do here is combining several features of interests and make use of the fact that the features of one person should be grouped together, that is they lie near each other in the document. Therefore by calculating the word distance, we can in a way determine which answer is better. The shorter the overall distance is, the more convincing the candidate answer is. We use an answer extraction score to stand for the quality of the answer. The "denoise" step is done in ``clarify`` function in main.py.
+In answer extraction part, the system check whether the ``validated documents`` really have ``answer`` for the query and gives documents ``answer extraction score``. It also uses functions in ``extraction.py``, while doing extractions for features stored in ``answer_field`` in ``parsed query`` and generate ``answer extraction score`` for each documents. 
+
+However, it could be challenging due to the ``"noises"`` that one document may contain more than one ``"answers"``. We consider that a more confident answer should be appear together with relevant ``person features``.
+
+After doing answer extraction, if there are only one answer in a document, the document gets a answer extraction score ``"1"`` by ``1-0`` (0 means no noise). 
+
+If there are multiple answers, calculate the ``average word distance`` of each answer and ``selected features`` (features relevant to person, e.g. name, address, email...). For example, if the selected features are name, address, email, there are 2 names, 1 address, 0 email, 3 answers found in the document, the ``average word distance`` for the ``answer_i`` defined as:
+
+avg_dis_i = \dfrac{|P_{name_1} - P_{ans_i}| + |P_{name_2} - P_{ans_i}| + |P_{address_1} - P_{ans_i}|}{3}$\\By calculating the ``average word distance``, the better is the answer, the smaller is the average word distance for that answer. We use an answer extraction score to stand for the quality of the answer. The "denoise" step is done in ``clarify`` function in main.py.
 
 Ranking
 =======
