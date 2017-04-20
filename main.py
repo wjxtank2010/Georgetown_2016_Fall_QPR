@@ -42,10 +42,10 @@ def TLD_specific_search(document):
     else:
         return ""
 
-def pipeline(query,tense=True):
+def pipeline(query,restricted=True):
     """
     :param query: Dictionary
-    :param tense: Bool, specify which mode to use for post annotation. if True, all the given conditions have to be satisfied.
+    :param restricted: Bool, specify which mode to use for post annotation. if True, all the given conditions have to be satisfied.
     :return:
     """
     answer_dic = []
@@ -92,7 +92,7 @@ def pipeline(query,tense=True):
         TLD =  TLD_specific_search(documents[i])
         if TLD:
             documents[i]["TLD"] = TLD
-        if validate(documents[i],parsed_query_dic,tense):
+        if validate(documents[i],parsed_query_dic,restricted):
             # print(documents[i]["_id"])
             answer = answer_extraction(documents[i],parsed_query_dic)
             if answer:
@@ -125,7 +125,6 @@ def annotator(documents,query_id):
         for document in documents[i*para_size:(i+1)*para_size]:
             raw_content = document["_source"]["raw_content"]
             raw_contents.append(raw_content)
-            clean_content = ""
             if "extracted_text" in document["_source"] and document["_source"]["extracted_text"]:
                 clean_content = document["_source"]["extracted_text"]
             else:
@@ -249,7 +248,14 @@ def generate_formal_answer(query,result):
     return final_result
 
 
-def clarify(document,feature,is_raw_content): #Calculate the character distance between target feature and clarify_list feature
+def clarify(document,feature,is_raw_content):
+    """
+    Calculate the character distance between target feature and clarify_list feature
+    :param document: Dictionary
+    :param feature: String
+    :param is_raw_content: Bool
+    :return: List[double]
+    """
     clarify_list = ["phone","hair_color","eye_color","height","weight","services"]
     clarify_result = []
     candidates = extraction.functionDic[feature](document,is_raw_content,True)
@@ -274,12 +280,6 @@ def clarify(document,feature,is_raw_content): #Calculate the character distance 
             scores[candidate[1]] = min(scores[candidate[1]],score/len(clarify_result))
     return scores
 
-
-def get_cluster_seed(query):
-    clauses = query["where"]["clauses"]
-    for clause in clauses:
-        if clause["predicate"] == "seed":
-            return clause["constraint"]
 
 def answer_extraction(document,parsed_query_dic):
     """
@@ -336,11 +336,11 @@ def answer_extraction(document,parsed_query_dic):
                 extraction_result = clarify(document,feature,True).items()
     return extraction_result
 
-def validate(document, parsed_query,tense): # Need to write
+def validate(document, parsed_query,restricted): # Need to write
     """
     :param document: Dictionary
     :param parsed_query: Dictionary: Parsed query in dictionary format providing validation fields
-    :param tense: Bool: validate mode(tense or loose)
+    :param restricted: Bool: validate mode(restricted or not restricted)
     :return: Bool: If the document satisfies the required conditions in query
     """
     raw_content = extraction.get_raw_content(document)
@@ -386,7 +386,7 @@ def validate(document, parsed_query,tense): # Need to write
             continue
 
         if feature in ["name","location","multipl_providers"]: #If given feature is not in this list and can not be found by string matching, the time-consuming annotation can hardly extract as well.
-            if tense:
+            if restricted:
                 # if document["_id"] == "17E9B1E77C39D0D688A125B1E051C6F35823D26AD5DBC51B67D97BB5A30DF245":
                 #     print(feature)
                 return False
@@ -419,7 +419,7 @@ def validate(document, parsed_query,tense): # Need to write
             validate_count += 1
             continue
         else:
-            if tense:
+            if restricted:
                 return False
             else:
                 continue

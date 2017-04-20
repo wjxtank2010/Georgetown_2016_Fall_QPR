@@ -4,7 +4,7 @@ from fuzzywuzzy import fuzz
 from nltk.corpus import stopwords
 from datetime import date,timedelta
 import ebola_html_dealer as html_cleaner
-import phonenumbers
+#import phonenumbers
 
 
 def get_text(document):
@@ -24,53 +24,6 @@ def get_raw_content(document):
         return document["_source"]["raw_content"]
     else:
         return ""
-
-#Feature_list [1:is_extract_text,2:is_meta_data,3:raw_content_match percentage, 4:extracted_text_match percentage 5:meta_data_match percentage
-#6:raw_content_len, 7:extract_len, 8:match_frequency, 9:elastic_score, 10:raw_content_ave_distance, 11:extract_text_ave_dis
-def is_extract_text(document):
-    if get_text(document):
-        return 1
-    else:
-        return 0
-
-def is_metadata(document): #extraction from elastic search
-    if "extracted_metadata" in document["_source"]:
-        return 1
-    else:
-        return 0
-
-def raw_content_length(document):
-    if "raw_content" in document["_source"]:
-        return len(document["_source"]["raw_content"].split())
-    else:
-        return 0
-
-def extract_content_length(document):
-    return len(get_text(document).split())
-
-def elastic_score(document):
-    return document["_score"]
-
-def generate_feature_score(document):
-    feature = {}
-    feature[1] = is_extract_text(document)
-    feature[2] = is_metadata(document)
-    feature[3] = document["raw_content_percentage"]
-    feature[4] = document["extract_text_percentage"]
-    feature[5] = document["meta_text_percentage"]
-    feature[6] = raw_content_length(document)
-    feature[7] = extract_content_length(document)
-    feature[8] = document["match_frequency"]
-    #feature[9] = elastic_score(document)
-    return feature
-
-def write_feature_score(feature_dic,query_id,document_id):
-    feature = "qid:"+document_id+" "
-    #print(feature_dic)
-    for i in range(len(feature_dic)):
-        feature += str(i+1)+":"+str(feature_dic[i+1])+" "
-    feature += "#docid = "+document_id
-    return feature
 
 #extraction
 #features: phone,email,street address, social media ID, review site ID, name, location, age, nationality/Ethnicity, price, tattoos, multiple provides, hair color, services, height, weight, eyecolor
@@ -1300,7 +1253,7 @@ if __name__ != "__main__":
     for color in normalized_color:
         if color not in color_dic:
             color_list.append(color)
-
+    os.system("pwd")
     global nationality_list
     nationality_filepath = "./resource/nationality"
     with open(nationality_filepath) as f:
@@ -1328,13 +1281,13 @@ if __name__ != "__main__":
     country_abbr_list = yaml.load(line)
 
     global state_abbr_dic
-    state_abbr_path = "state_abbr"
+    state_abbr_path = "./resource/state_abbr"
     w = open(state_abbr_path)
     state_abbr_dic = json.load(w)
     w.close()
 
     global continent_dic
-    continent_dic_path = "nation_continent.txt"
+    continent_dic_path = "./resource/nation_continent.txt"
     f = open(continent_dic_path)
     continent_dic = yaml.load(f)
     f.close()

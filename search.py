@@ -22,7 +22,6 @@ def query_parse(query):  # input query - json
     :param query: Dictionary
     :return: parsed query: Dictionary
     """
-    skin_color_list = ["white","yellow","black"]
     query_id = query['id']
     query_type = query['type']
     sparql = query['SPARQL'][0]
@@ -34,6 +33,7 @@ def query_parse(query):  # input query - json
     must_match = {} #Validation fields after document retrieval
     should_match = {} #Optional fields after document retrieval
     group = {}
+    skin_color_list = ["white","yellow","black"]#the tree main skin color
     for line in lines:
         line = line.strip()
         words = line.split(' ')
@@ -93,13 +93,9 @@ def query_parse(query):  # input query - json
                     if location:
                         should_search['location'] = constraint
                         if len(location)>1:
-                            if location[1].lower().capitalize() in extraction.nationality_list:
-                                must_search['location'] = location[0]
-                            else: #city
-                                must_search["location"] = constraint
-                        else:
                             must_search['location'] = location[0]
-                        must_match['location'] = constraint
+                        else:
+                            must_search['location'] = constraint
                 elif predicate == 'multiple_providers':
                     should_search['multiple_providers'] = constraint
                     must_match[predicate] = constraint
@@ -166,7 +162,6 @@ def query_parse(query):  # input query - json
     parsed_dic['must_search_field'] = must_search
     parsed_dic['should_search_field'] = should_search
     parsed_dic['required_match_field'] = must_match
-    parsed_dic['optional_match_field'] = should_match
     parsed_dic['group'] = group
     return parsed_dic
 
@@ -179,10 +174,8 @@ def query_body_build(parsed_query):
     """
     must_list = []
     should_list = []
-    must_not_list = []
     must_search_dic = parsed_query["must_search_field"]
     should_search_dic = parsed_query["should_search_field"]
-    must_not_dic = parsed_query["must_not_field"]
     answer_field = parsed_query["answer_field"]
     for condition in must_search_dic:
         if condition == "phone" and not re.findall("\D",must_search_dic["phone"]):
@@ -262,3 +255,6 @@ def annotation(text,query_id):
         os.system("rm "+filename)
         return annotated_text
 
+if __name__ == "__main__":
+    query = {"type": "Point Fact", "question": "What is the country of birth listed in the ad that contains the phone number 6135019502, in Toronto Ontario, with the title 'the millionaires mistress'?", "id": "192", "SPARQL": ["PREFIX qpr: <http://istresearch.com/qpr>\nSELECT ?ad ?ethnicity\nWHERE\n{\t?ad a qpr:Ad ;\n\tqpr:phone '6135019502' ;\n\tqpr:location 'Toronto, Ontario' ;\n\tqpr:title ?title .\n\tFILTER CONTAINS(LCASE(?title), 'the millionaires mistress')\n}"]}
+    print(query_body_build(query_parse(query)))
