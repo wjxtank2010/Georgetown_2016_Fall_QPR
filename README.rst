@@ -17,7 +17,9 @@ There is also a shell script named ``pipInstall.sh`` in this repository that can
 Search
 ======
 
-The code of this part is mainly in ``search.py``. It basically takes a SPARQL query as input, do query parsing & expansion, then build elasticsearch query body based on it, finally retrive documents from elasticsearch. A sample query could be:
+In the Search part, it takes ``SPARQL query`` as input, does ``query parsing`` and ``query expansion``, then builds ``Elasticsearch query body`` and ``retrieves top 3000 documents`` from Elasticsearch.
+
+The code of this part is mainly in ``search.py``. A sample ``SPARQL query input`` could be:
 
 ::
     {
@@ -27,7 +29,7 @@ The code of this part is mainly in ``search.py``. It basically takes a SPARQL qu
 		"SPARQL": ["PREFIX qpr: <http://istresearch.com/qpr>\nSELECT ?ad ?ethnicity\nWHERE\n{\t?ad a qpr:Ad ;\n\tqpr:phone '6135019502' ;\n\tqpr:location 'Toronto, Ontario' ;\n\tqpr:title ?title .\n\tFILTER CONTAINS(LCASE(?title), 'the millionaires mistress')\n}"]
     }
 
-and the parsed query would be:
+and the ``parsed query`` would be:
 
 ::
     {
@@ -56,7 +58,7 @@ and the parsed query would be:
 		'id': '192'
 	}
 
-the elasticsearch query body would be:
+the ``elasticsearch query body`` would be (after query expansion):
 
 ::
     {'query': 
@@ -83,6 +85,7 @@ the elasticsearch query body would be:
 		}, 
 		'size': 3000
 	}
+
 
 Validation
 ==========
