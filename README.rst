@@ -1,23 +1,23 @@
-Georgetown Memex Human Traffic Point Fact System
+Georgetown Memex Human Traffic Point Fact Search System
 ================================================
 
-This is the system answering Memex Human Traffic ``Point Fact`` questions from Georgetown Univerisity Infosense Team. 
+This is the search system for Memex Human Traffic ``Point Fact`` questions from Georgetown Univerisity Infosense Team. 
 
 Usage
 =====
 
-The system is generally divided into 4 parts, which are ``Search``, ``Validation``, ``Answer Extraction`` and ``Ranking. It is written in Python so before you go ahead and run the system, there are some packages that need to be installed
+The system is generally divided into 4 parts, which are ``Search``, ``Validation``, ``Answer Extraction`` and ``Ranking``. It is mainly implemented by Python so before you go ahead and run the system, there are several packages that need to be installed:
 
 ::
     fuzzywuzzy,elasticsearch,certifi,pyyaml,bs4,webcolors,nltk,cbor,lxml
     
 
-There is also a file named ``pipInstall.sh`` in the repository that can install all the packages above once you run it. 
+There is also a shell script named ``pipInstall.sh`` in this repository that can help you install all the packages above once you run it. 
 
 Search
 ======
 
-The code of this part is mainly in ``search.py``. It basically takes a sparkl query as input, do query parsing & expansion, then build elasticsearch query body based on it, finally retrive documents from elasticsearch. A sample query could be:
+The code of this part is mainly in ``search.py``. It basically takes a SPARQL query as input, do query parsing & expansion, then build elasticsearch query body based on it, finally retrive documents from elasticsearch. A sample query could be:
 
 ::
     {
