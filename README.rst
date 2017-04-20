@@ -9,8 +9,8 @@ Usage
 The system is generally divided into 4 parts, which are ``Search``, ``Validation``, ``Answer Extraction`` and ``Ranking. It is written in Python so before you go ahead and run the system, there are some packages that need to be installed
 
 ::
-
-	fuzzywuzzy,elasticsearch,certifi,pyyaml,bs4,webcolors,nltk,cbor,lxml
+    fuzzywuzzy,elasticsearch,certifi,pyyaml,bs4,webcolors,nltk,cbor,lxml
+    
 
 There is also a file named ``pipInstall.sh`` in the repository that can install all the packages above once you run it. 
 
@@ -20,17 +20,17 @@ Search
 The code of this part is mainly in ``search.py``. It basically takes a sparkl query as input, do query parsing & expansion, then build elasticsearch query body based on it, finally retrive documents from elasticsearch. A sample query could be:
 
 ::
-	{
+    {
 		"type": "Point Fact", 
 		"question": "What is the country of birth listed in the ad that contains the phone number 6135019502, in Toronto Ontario, with the title 'the millionaires mistress'?", 
 		"id": "192", 
 		"SPARQL": ["PREFIX qpr: <http://istresearch.com/qpr>\nSELECT ?ad ?ethnicity\nWHERE\n{\t?ad a qpr:Ad ;\n\tqpr:phone '6135019502' ;\n\tqpr:location 'Toronto, Ontario' ;\n\tqpr:title ?title .\n\tFILTER CONTAINS(LCASE(?title), 'the millionaires mistress')\n}"]
-	}
+    }
 
 and the parsed query would be:
 
 ::
-	{
+    {
 		'must_search_field': 
 			{
 				'phone': '6135019502', 
@@ -59,7 +59,7 @@ and the parsed query would be:
 the elasticsearch query body would be:
 
 ::
-	{'query': 
+    {'query': 
 		{'bool': 
 			{'should': 
 				[
@@ -100,7 +100,7 @@ Ranking
 After we got the candidate answers, ``validation score`` and ``answer extraction score``, we need to do a rank to see which document is better, namely we need to get a ``final score`` for each document. What we define here is 
 
 ::
-	``final score`` = ``validation score`` * ``answer extraction score``
+    ``final score`` = ``validation score`` * ``answer extraction score``
 
 Then we set up a threshhold to do a filter of the documents. This step is done in ``generate_formal_answer`` function in main.py. If there is no answer in the end, we will run the query again but with unrestricted mode this time. 
 
