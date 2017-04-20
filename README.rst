@@ -116,7 +116,7 @@ If there are multiple answers, calculate the ``average word distance`` of each a
 
 where P means percentage word position in whole document.
 
-The better is the answer, the smaller is the average word distance for that answer. We use an answer extraction score to stand for the quality of the answer. Corresponding ``answer extraction score`` is ``1 - avg_dis_i``. The ``"denoise"`` is done in ``clarify`` function in main.py.
+The better is the answer, the smaller is the average word distance for that answer. If the ``answer_k`` has the smallest ``average word distance``, the ``answer extraction score`` of this document is ``1 - avg_dis_k``. The ``"denoise"`` is done in ``clarify`` function in main.py.
 
 Ranking
 =======
