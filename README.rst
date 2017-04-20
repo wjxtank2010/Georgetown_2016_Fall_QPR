@@ -110,8 +110,10 @@ However, it could be challenging due to the ``"noises"`` that one document may c
 After doing answer extraction, if there are only one answer in a document, the document gets a answer extraction score ``"1"`` by ``1-0`` (0 means no noise). 
 
 If there are multiple answers, calculate the ``average word distance`` of each answer and ``selected features`` (features relevant to person, e.g. name, address, email...). For example, if the selected features are name, address, email, there are 2 names, 1 address, 0 email, 3 answers found in the document, the ``average word distance`` for the ``answer_i`` defined as:
+::
+avg_dis_i = (|P_name_1 - P_ans_i| + |P_name_2 - P_ans_i| + |P_address_1 - P_ans_i|)/3
 
-avg_dis_i = \dfrac{|P_{name_1} - P_{ans_i}| + |P_{name_2} - P_{ans_i}| + |P_{address_1} - P_{ans_i}|}{3}$\\By calculating the ``average word distance``, the better is the answer, the smaller is the average word distance for that answer. We use an answer extraction score to stand for the quality of the answer. The "denoise" step is done in ``clarify`` function in main.py.
+The better is the answer, the smaller is the average word distance for that answer. We use an answer extraction score to stand for the quality of the answer. Corresponding ``answer extraction score`` is ``1 - avg_dis_i``. The ``"denoise"`` is done in ``clarify`` function in main.py.
 
 Ranking
 =======
