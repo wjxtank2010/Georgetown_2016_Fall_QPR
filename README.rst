@@ -91,7 +91,14 @@ Validation
 ==========
 
 After document retrival, we would do validation to check if a document is atcually what we are search for. It takes ``candidate documents`` in last step as ``input`` and generate ``validation score`` for each document. The validation step is done in ``validate`` function in ``main.py``. 
-There are two modes for validation which are ``restricted mode`` and  ``unrestricted mode``. In the ``restricted mode``, all the given conditions (which stored in ``required_match_field`` in ``parsed query``) in the query have to be satified in order for a document to be validated. While in ``loosed mode``, the more conditions satisfied, the better the document is. And we will evaluate the validation quality by a score which called ``validation score``. In restricted mode, the ``validation score``is either 1(all given conditions satisfied) or 0(any condition not satisfied). In unrestricted mode, the ``validation score`` depends on how much conditions satified. For example, if there are 5 given conditions and 3 of them meets in a document, then the ``validation score`` for that docuemnt is 3/5 = 0.6. Initially, we answer the query in restricted mode. If there is no answers in stricted mode, then the system automatically try the unrestricted mode. 
+
+There are two modes for validation which are ``restricted mode`` and  ``unrestricted mode``. 
+
+In the ``restricted mode``, all the given conditions (which stored in ``required_match_field`` in ``parsed query``) in the query have to be satified in order for a document to be validated. While in ``loosed mode``, the more conditions satisfied, the better the document is. 
+
+And the system evaluates the validation quality by a score which called ``validation score``. In restricted mode, the ``validation score``is either 1(all given conditions satisfied) or 0(any condition not satisfied). In unrestricted mode, the ``validation score`` depends on how much conditions satified. For example, if there are 5 given conditions and 3 of them meets in a document, then the ``validation score`` for that docuemnt is 3/5 = 0.6. 
+
+Initially, we answer the query in restricted mode. If there is no answers in stricted mode, then the system automatically try the unrestricted mode. 
 
 Answer Extraction
 =================
